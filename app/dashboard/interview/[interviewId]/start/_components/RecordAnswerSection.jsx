@@ -8,6 +8,8 @@ import { db } from "@/utils/db";
 import { UserAnswer } from "@/utils/schema";
 import { useUser } from "@clerk/nextjs";
 import moment from "moment";
+import Webcam from "react-webcam";
+
 
 const RecordAnswerSection = ({ 
   mockInterviewQuestion, 
@@ -22,7 +24,7 @@ const RecordAnswerSection = ({
   const [webcamEnabled, setWebcamEnabled] = useState(false);
   const recognitionRef = useRef(null);
   const webcamRef = useRef(null);
-
+  const [webCamEnabled, setWebCamEnabled] = useState(false);
   useEffect(() => {
     // Speech recognition setup (previous code remains the same)
     if (typeof window !== "undefined" && 'webkitSpeechRecognition' in window) {
@@ -154,13 +156,16 @@ const RecordAnswerSection = ({
       )}
       <div className="flex flex-col my-20 justify-center items-center bg-black rounded-lg p-5">
         {webcamEnabled ? (
-          <video 
-            ref={webcamRef} 
-            autoPlay 
-            playsInline 
-            className="w-[200px] h-[200px] object-cover rounded-lg"
-          />
-        ) : (
+                    <Webcam
+                      mirrored={true}
+                      style={{ height: 300, width: "auto" }}
+                      onUserMedia={() => setWebCamEnabled(true)}
+                      onUserMediaError={() => {
+                        toast.error("Webcam access error");
+                        setWebCamEnabled(false);
+                      }}
+                    />
+                  ) : (
           <div className="w-[200px] h-[200px] flex justify-center items-center bg-gray-200 rounded-lg">
             <p className="text-gray-500">Webcam Disabled</p>
           </div>
